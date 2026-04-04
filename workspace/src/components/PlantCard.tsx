@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 import { getDaysUntilWatering } from "./date-utils.ts";
-import { useFavoritesStore } from "./useFavoritesStore.ts";
+import { selectIsFavorite, useFavoritesStore } from "./useFavoritesStore.ts";
 
 type PlantCardProps = {
   id: string;
@@ -18,9 +18,9 @@ export default function PlantCard({
   wateringInterval,
   lastWatered,
 }: PlantCardProps) {
-  const { favoriteIds, toggleFavorite } = useFavoritesStore();
-
-  const isFavorite = favoriteIds.includes(id);
+  // Externer Selector aus der Store-Datei – wiederverwendbar und testbar
+  const isFavorite = useFavoritesStore(selectIsFavorite(id));
+  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
 
   const wateringInfo =
     wateringInterval === 1

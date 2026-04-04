@@ -5,7 +5,7 @@ type FavoritesStore = {
   toggleFavorite: (id: string) => void;
 };
 
-export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
+export const useFavoritesStore = create<FavoritesStore>((set) => ({
   favoriteIds: [],
 
   toggleFavorite: (id) =>
@@ -15,3 +15,9 @@ export const useFavoritesStore = create<FavoritesStore>((set, get) => ({
         : { favoriteIds: [...state.favoriteIds, id] },
     ),
 }));
+
+// Externer Selector – wiederverwendbar und testbar
+export const selectIsFavorite =
+  (id: string) =>
+  (state: FavoritesStore): boolean =>
+    state.favoriteIds.includes(id);
