@@ -1,5 +1,6 @@
 import { Plant } from "../types.ts";
 import PlantCardList from "./PlantCardList.tsx";
+import { useFavoritesStore } from "./useFavoritesStore.ts";
 
 const allPlants: Plant[] = [
   {
@@ -39,9 +40,24 @@ const allPlants: Plant[] = [
 ];
 
 export default function PlantList() {
+  const { favoriteIds } = useFavoritesStore();
+  const favoritePlants = allPlants.filter((p) => favoriteIds.includes(p.id));
+
   return (
-    <div>
-      <PlantCardList plants={allPlants} />
+    <div className={"PlantList"}>
+      <div>
+        <h2>Alle Pflanzen</h2>
+        <PlantCardList plants={allPlants} />
+      </div>
+
+      <div>
+        <h2>Meine Favoriten</h2>
+        {favoritePlants.length === 0 ? (
+          <p>Noch keine Favoriten ausgewählt.</p>
+        ) : (
+          <PlantCardList plants={favoritePlants} />
+        )}
+      </div>
     </div>
   );
 }
