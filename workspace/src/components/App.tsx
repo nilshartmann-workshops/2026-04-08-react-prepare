@@ -16,6 +16,11 @@ export default function App() {
 
   const [activeTabId, setActiveTabId] = useState("list");
 
+  // Erhalten des Formularzustands
+  //  - Variante 1: State hierher schieben
+  //  - Variante 2: Activity
+  //  - Variante 3: globaler Zustand (sehen wir später)
+
   return (
     <div className={"AppContainer"}>
       <TabBar>
