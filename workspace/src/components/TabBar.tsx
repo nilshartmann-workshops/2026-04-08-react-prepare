@@ -27,6 +27,7 @@ import { ReactNode } from "react";
 
 type TabBarProps = {
   // todo: children-Property
+  children: ReactNode;
 };
 
 /**
@@ -35,8 +36,8 @@ type TabBarProps = {
  * Äußerer Container der gesamten Tab-Navigation.
  * Rendert alle Kinder (Tabs und Panels).
  */
-export function TabBar(props: TabBarProps) {
-  return <div className="TabBar">todo! Kind-Elemente rendern</div>;
+export function TabBar({ children }: TabBarProps) {
+  return <div className="TabBar">{children}</div>;
 }
 
 type TabProps = {
@@ -45,6 +46,10 @@ type TabProps = {
   // - activeTabId
   // - onTabChange
   // - children (für Button-Label)
+
+  activeTabId: string;
+  onTabChange: (tab: string) => void;
+  children: ReactNode;
 };
 
 /**
@@ -54,16 +59,27 @@ type TabProps = {
  * Ist deaktiviert, wenn er dem aktiven Tab entspricht.
  * Beim Klick wird er zum aktiven Tab.
  */
-export function Tab({ tabId }: TabProps) {
+export function Tab({ tabId, activeTabId, onTabChange, children }: TabProps) {
   // todo:
   // - beim Klicken soll onTabChange aufgerufen werden
   // - Der Button soll disabled sein, wenn dieser Tab gerade aktiv ist
 
-  return <button className={"Tab"}>todo: label!</button>;
+  const isActive = activeTabId === tabId;
+
+  return (
+    <button
+      onClick={() => onTabChange(tabId)}
+      className={"Tab"}
+      disabled={isActive}
+    >
+      {children}
+    </button>
+  );
 }
 
 type PanelProps = {
   tabId: string;
+  activeTabId: string;
   children: ReactNode;
 
   // todo Props:
@@ -80,9 +96,13 @@ type PanelProps = {
  * Inhalt der zu einem Tab gehört.
  * Wird nur angezeigt, wenn der zugehörige Tab aktiv ist.
  */
-export function Panel({ tabId, children }: PanelProps) {
+export function Panel({ tabId, activeTabId, children }: PanelProps) {
   // todo:
   //   Panel-Inhalt nur rendern, wenn der zugehörige Tab aktiv ist!
 
-  return <div className="TabPanel">todo!</div>;
+  if (activeTabId !== tabId) {
+    return null;
+  }
+
+  return <div className="TabPanel">{children}</div>;
 }
