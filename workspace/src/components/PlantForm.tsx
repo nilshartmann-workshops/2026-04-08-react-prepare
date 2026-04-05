@@ -1,3 +1,5 @@
+import { useMutation } from "@tanstack/react-query";
+import ky from "ky";
 import { useState } from "react";
 
 import IntervalSelector from "./IntervalSelector.tsx";
@@ -7,9 +9,16 @@ export default function PlantForm() {
   const [location, setLocation] = useState("");
   const [wateringInterval, setWateringInterval] = useState(1);
 
-  const onSaveClick = () => {
-    // todo
-  };
+  const { mutate, isPending, error } = useMutation({
+    mutationFn() {
+      return ky
+        .post("http://localhost:7200/api/plants", {
+          json: { name, location, wateringInterval },
+          retry: 0,
+        })
+        .json();
+    },
+  });
 
   return (
     <form>
@@ -29,11 +38,14 @@ export default function PlantForm() {
         }
       />
 
+      {error && <p className={"error-message"}>{error.message}</p>}
+
       <div className={"FormButtons"}>
         <button
           type={"button"}
           className={"primary"}
-          onClick={() => onSaveClick()}
+          disabled={isPending}
+          onClick={() => mutate()}
         >
           Pflanze hinzufügen 🌱
         </button>
