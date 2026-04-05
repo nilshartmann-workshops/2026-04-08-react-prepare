@@ -1,6 +1,9 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import ky from "ky";
 
 import { getDaysUntilWatering } from "./date-utils.ts";
+import { plantsQueryOptions } from "./plantsQueryOptions.ts";
 import { selectIsFavorite, useFavoritesStore } from "./useFavoritesStore.ts";
 
 type PlantCardProps = {
@@ -21,6 +24,21 @@ export default function PlantCard({
   // Externer Selector aus der Store-Datei – wiederverwendbar und testbar
   const isFavorite = useFavoritesStore(selectIsFavorite(id));
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
+
+  const queryClient = useQueryClient();
+  const { mutate: markAsWatered, isPending } = useMutation({
+    async mutationFn() {
+      return ky
+        .put(`http://localhost:7200/api/plants/${id}/lastWatered`, {
+          json: { lastWatered: new Date().toISOString() },
+          retry: 0,
+        })
+        .json();
+    },
+    onSuccess() {
+      queryClient.invalidateQueries(plantsQueryOptions());
+    },
+  });
 
   const wateringInfo =
     wateringInterval === 1
@@ -62,6 +80,13 @@ export default function PlantCard({
         <div>{wateringInfo}</div>
         {lastWateredMsg}
         {wateringMsg}
+        <button
+          type={"button"}
+          disabled={isPending}
+          onClick={() => markAsWatered()}
+        >
+          💧 Jetzt gegossen
+        </button>
       </section>
     </div>
   );
