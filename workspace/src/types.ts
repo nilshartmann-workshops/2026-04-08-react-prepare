@@ -1,7 +1,11 @@
-export type Plant = {
-  id: string;
-  name: string;
-  location: string;
-  wateringInterval: number;
-  lastWatered?: string;
-};
+import { z } from "zod/v4";
+
+export const PlantSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  location: z.string(),
+  wateringInterval: z.number().min(1),
+  lastWatered: z.string().optional(),
+});
+
+export type Plant = z.infer<typeof PlantSchema>;

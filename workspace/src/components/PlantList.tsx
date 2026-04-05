@@ -1,15 +1,20 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ky from "ky";
+import { z } from "zod/v4";
 
-import { Plant } from "../types.ts";
+import { PlantSchema } from "../types.ts";
 import FavoritePlantList from "./FavoritePlantList.tsx";
 import PlantCardList from "./PlantCardList.tsx";
 
 export default function PlantList() {
   const { data: plants } = useSuspenseQuery({
     queryKey: ["plants"],
-    queryFn: () =>
-      ky.get("http://localhost:7200/api/plants", { retry: 0 }).json<Plant[]>(),
+    queryFn: async () => {
+      const data = await ky
+        .get("http://localhost:7200/api/plants", { retry: 0 })
+        .json();
+      return z.array(PlantSchema).parse(data);
+    },
   });
 
   return (
