@@ -35,7 +35,33 @@ export default function PlantCard({
         })
         .json();
     },
-    onSuccess() {
+    async onMutate() {
+      // Laufende Refetches abbrechen, damit sie das optimistische Update nicht überschreiben
+      await queryClient.cancelQueries(plantsQueryOptions());
+
+      // Snapshot des aktuellen Cache-Inhalts für den Rollback-Fall
+      const previousPlants = queryClient.getQueryData(
+        plantsQueryOptions().queryKey,
+      );
+
+      // Cache optimistisch aktualisieren
+      queryClient.setQueryData(plantsQueryOptions().queryKey, (plants) =>
+        plants?.map((p) =>
+          p.id === id ? { ...p, lastWatered: new Date().toISOString() } : p,
+        ),
+      );
+
+      return { previousPlants };
+    },
+    onError(_error, _variables, context) {
+      // Bei Fehler: Cache auf den Snapshot zurücksetzen
+      queryClient.setQueryData(
+        plantsQueryOptions().queryKey,
+        context?.previousPlants,
+      );
+    },
+    onSettled() {
+      // Nach Abschluss (Erfolg oder Fehler): mit Server synchronisieren
       queryClient.invalidateQueries(plantsQueryOptions());
     },
   });
