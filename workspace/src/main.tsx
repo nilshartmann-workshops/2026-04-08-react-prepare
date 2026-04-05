@@ -4,7 +4,7 @@ import "./setup-dayjs.ts";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 
-import App from "./components/App.tsx";
+import App from "./App.tsx";
 import { createQueryClient } from "./create-query-client.tsx";
 
 const queryClient = createQueryClient();

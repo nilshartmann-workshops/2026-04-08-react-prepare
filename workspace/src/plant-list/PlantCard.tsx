@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import ky from "ky";
 
-import { getDaysUntilWatering } from "./date-utils.ts";
+import { getDaysUntilWatering } from "../shared/date-utils.ts";
 import { plantsQueryOptions } from "./plantsQueryOptions.ts";
 import { selectIsFavorite, useFavoritesStore } from "./useFavoritesStore.ts";
 

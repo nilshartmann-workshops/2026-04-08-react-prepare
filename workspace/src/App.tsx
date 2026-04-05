@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 
-import PlantErrorBoundary from "./PlantErrorBoundary.tsx";
-import PlantForm from "./PlantForm.tsx";
-import PlantList from "./PlantList.tsx";
-import { Panel, Tab, TabBarCompound } from "./TabBarCompound.tsx";
+import PlantForm from "./plant-form/PlantForm.tsx";
+import PlantList from "./plant-list/PlantList.tsx";
+import PlantErrorBoundary from "./shared/PlantErrorBoundary.tsx";
+import { Panel, Tab, TabBarCompound } from "./shared/TabBarCompound.tsx";
 
 export default function App() {
   return (
