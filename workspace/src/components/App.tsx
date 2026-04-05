@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+
+import PlantErrorBoundary from "./PlantErrorBoundary.tsx";
 import PlantForm from "./PlantForm.tsx";
 import PlantList from "./PlantList.tsx";
 import { Panel, Tab, TabBarCompound } from "./TabBarCompound.tsx";
@@ -9,7 +12,11 @@ export default function App() {
         <Tab tabId="list">Pflanzen</Tab>
         <Tab tabId="form">Neue Pflanze</Tab>
         <Panel tabId="list">
-          <PlantList />
+          <Suspense fallback={<p>Lade Pflanzen...</p>}>
+            <PlantErrorBoundary>
+              <PlantList />
+            </PlantErrorBoundary>
+          </Suspense>
         </Panel>
         <Panel tabId="form">
           <PlantForm />

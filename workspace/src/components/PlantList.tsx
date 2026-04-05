@@ -1,7 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 import FavoritePlantList from "./FavoritePlantList.tsx";
 import PlantCardList from "./PlantCardList.tsx";
+import PlantErrorBoundary from "./PlantErrorBoundary.tsx";
 import { plantsQueryOptions } from "./plantsQueryOptions.ts";
 
 export default function PlantList() {
@@ -14,7 +16,11 @@ export default function PlantList() {
         <PlantCardList plants={plants} />
       </div>
 
-      <FavoritePlantList />
+      <Suspense fallback={<p>Lade Favoriten...</p>}>
+        <PlantErrorBoundary>
+          <FavoritePlantList />
+        </PlantErrorBoundary>
+      </Suspense>
     </div>
   );
 }
