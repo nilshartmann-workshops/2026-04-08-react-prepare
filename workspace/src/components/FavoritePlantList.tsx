@@ -1,12 +1,11 @@
-import { Plant } from "../types.ts";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import PlantCardList from "./PlantCardList.tsx";
+import { plantsQueryOptions } from "./plantsQueryOptions.ts";
 import { useFavoritesStore } from "./useFavoritesStore.ts";
 
-type FavoritePlantListProps = {
-  plants: Plant[];
-};
-
-export default function FavoritePlantList({ plants }: FavoritePlantListProps) {
+export default function FavoritePlantList() {
+  const { data: plants } = useSuspenseQuery(plantsQueryOptions());
   const { favoriteIds } = useFavoritesStore();
   const favoritePlants = plants.filter((p) => favoriteIds.includes(p.id));
 
