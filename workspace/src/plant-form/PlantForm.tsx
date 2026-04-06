@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ky, { HTTPError } from "ky";
 import { useState } from "react";
 
@@ -9,6 +9,8 @@ export default function PlantForm() {
   const [location, setLocation] = useState("");
   const [wateringInterval, setWateringInterval] = useState(1);
 
+  const queryClient = useQueryClient();
+
   const { mutate, isPending, error, isSuccess } = useMutation({
     mutationFn() {
       return ky
@@ -17,6 +19,9 @@ export default function PlantForm() {
           retry: 0,
         })
         .json();
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["plants"] });
     },
   });
 
