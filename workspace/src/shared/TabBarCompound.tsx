@@ -55,6 +55,7 @@ function useTabBar(): TabBarContextValue {
 
 type TabBarCompoundProps = {
   children: ReactNode;
+  defaultTabId?: string;
 };
 
 /**
@@ -63,11 +64,14 @@ type TabBarCompoundProps = {
  * Äußerer Container der Tab-Navigation.
  * Verwaltet den aktiven Tab-Zustand und stellt ihn über einen Context bereit.
  */
-export function TabBarCompound({ children }: TabBarCompoundProps) {
+export function TabBarCompound({
+  children,
+  defaultTabId = "list",
+}: TabBarCompoundProps) {
   // todo:
   // - Lege einen internen State für activeTabId an
   // - Umschließe children mit <TabBarContext.Provider value={...}>
-  const [activeTabId, setActiveTabId] = useState("list");
+  const [activeTabId, setActiveTabId] = useState(defaultTabId);
 
   return (
     <TabBarContext.Provider

@@ -1,16 +1,26 @@
-import { Suspense } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { lazy, Suspense } from "react";
 
-import PlantForm from "./plant-form/PlantForm.tsx";
-import PlantList from "./plant-list/PlantList.tsx";
+import { plantsQueryOptions } from "./plant-list/plantsQueryOptions.ts";
 import PlantErrorBoundary from "./shared/PlantErrorBoundary.tsx";
 import { Panel, Tab, TabBarCompound } from "./shared/TabBarCompound.tsx";
 
+const PlantList = lazy(() => import("./plant-list/PlantList.tsx"));
+const PlantForm = lazy(() => import("./plant-form/PlantForm.tsx"));
+
 export default function App() {
+  const queryClient = useQueryClient();
+  queryClient.prefetchQuery(plantsQueryOptions());
+
   return (
     <div className={"AppContainer"}>
-      <TabBarCompound>
+      <TabBarCompound defaultTabId="home">
+        <Tab tabId="home">Home</Tab>
         <Tab tabId="list">Pflanzen</Tab>
         <Tab tabId="form">Neue Pflanze</Tab>
+        <Panel tabId="home">
+          <p>Willkommen bei der Pflanzen-App! 🌱</p>
+        </Panel>
         <Panel tabId="list">
           <Suspense fallback={<p>Lade Pflanzen...</p>}>
             <PlantErrorBoundary>
@@ -19,32 +29,11 @@ export default function App() {
           </Suspense>
         </Panel>
         <Panel tabId="form">
-          <PlantForm />
+          <Suspense fallback={<p>Lade Formular...</p>}>
+            <PlantForm />
+          </Suspense>
         </Panel>
       </TabBarCompound>
-
-      {/* Variante 2: Render Props (zum Vergleich)
-      <TabBarRenderProp>
-        {(activeTabId, onTabChange) => (
-          <>
-            <Tab tabId="list" activeTabId={activeTabId} onTabChange={onTabChange}>Pflanzen</Tab>
-            <Tab tabId="form" activeTabId={activeTabId} onTabChange={onTabChange}>Neue Pflanze</Tab>
-            <Panel tabId="list" activeTabId={activeTabId}><PlantList /></Panel>
-            <Panel tabId="form" activeTabId={activeTabId}><PlantForm /></Panel>
-          </>
-        )}
-      </TabBarRenderProp>
-      */}
-
-      {/* Variante 1: Prop Drilling (zum Vergleich)
-      const [activeTabId, setActiveTabId] = useState("list");
-      <TabBar>
-        <Tab tabId="list" activeTabId={activeTabId} onTabChange={setActiveTabId}>Pflanzen</Tab>
-        <Tab tabId="form" activeTabId={activeTabId} onTabChange={setActiveTabId}>Neue Pflanze</Tab>
-        <Panel tabId="list" activeTabId={activeTabId}><PlantList /></Panel>
-        <Panel tabId="form" activeTabId={activeTabId}><PlantForm /></Panel>
-      </TabBar>
-      */}
     </div>
   );
 }
