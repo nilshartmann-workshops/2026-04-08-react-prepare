@@ -9,36 +9,34 @@ export default function PlantForm() {
   const [location, setLocation] = useState("");
   const [wateringInterval, setWateringInterval] = useState(1);
 
-  const { mutate, isPending, error } = useMutation({
-    async mutationFn() {
-      try {
-        return await ky
-          .post("http://localhost:7200/api/plants", {
-            json: { name, location, wateringInterval },
-            retry: 0,
-          })
-          .json();
-      } catch (e) {
-        if (e instanceof HTTPError) {
-          // ky wirft HTTPError bei nicht-erfolgreichen HTTP-Status-Codes.
-          // Der Response-Body enthält oft eine aussagekräftigere Fehlermeldung.
-          const body = await e.response.json<{ error?: string }>();
-          throw new Error(body.error ?? e.message);
-        }
-        throw e;
-      }
+  const { mutate, isPending, error, isSuccess } = useMutation({
+    mutationFn() {
+      return ky
+        .post("http://localhost:7200/api/plants", {
+          json: { name, location, wateringInterval },
+          retry: 0,
+        })
+        .json();
     },
   });
 
   return (
     <form>
       <div className={"FormControl"}>
-        <label>Name der Pflanze</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} />
+        <label htmlFor="name">Name der Pflanze</label>
+        <input
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </div>
       <div className={"FormControl"}>
-        <label>Standort</label>
-        <input value={location} onChange={(e) => setLocation(e.target.value)} />
+        <label htmlFor="location">Standort</label>
+        <input
+          id="location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
       </div>
 
       <IntervalSelector
@@ -60,6 +58,8 @@ export default function PlantForm() {
           Pflanze hinzufügen 🌱
         </button>
       </div>
+
+      {isSuccess && <p className={"success-message"}>Pflanze angelegt!</p>}
     </form>
   );
 }
