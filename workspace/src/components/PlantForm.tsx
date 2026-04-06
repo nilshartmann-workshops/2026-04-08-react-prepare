@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import ky from "ky";
+import ky, { HTTPError } from "ky";
 import { useState } from "react";
 
 import IntervalSelector from "./IntervalSelector.tsx";
@@ -10,13 +10,23 @@ export default function PlantForm() {
   const [wateringInterval, setWateringInterval] = useState(1);
 
   const { mutate, isPending, error } = useMutation({
-    mutationFn() {
-      return ky
-        .post("http://localhost:7200/api/plants", {
-          json: { name, location, wateringInterval },
-          retry: 0,
-        })
-        .json();
+    async mutationFn() {
+      try {
+        return await ky
+          .post("http://localhost:7200/api/plants", {
+            json: { name, location, wateringInterval },
+            retry: 0,
+          })
+          .json();
+      } catch (e) {
+        if (e instanceof HTTPError) {
+          // ky wirft HTTPError bei nicht-erfolgreichen HTTP-Status-Codes.
+          // Der Response-Body enthält oft eine aussagekräftigere Fehlermeldung.
+          const body = await e.response.json<{ error?: string }>();
+          throw new Error(body.error ?? e.message);
+        }
+        throw e;
+      }
     },
   });
 
