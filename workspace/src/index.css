@@ -60,11 +60,12 @@
   @apply mb-6 border-b border-gray-200;
 }
 
-.Tab {
+.Tab, a.Tab {
   @apply mr-2 -mb-px rounded-t-lg border border-gray-200 border-b-white bg-green-50 px-4 py-2 text-sm font-semibold text-gray-600 transition-colors hover:bg-green-100 hover:text-green-700;
 }
 
-.Tab:disabled {
+.Tab:disabled,
+a.Tab--active {
   @apply cursor-default bg-white text-green-700;
 }
 
