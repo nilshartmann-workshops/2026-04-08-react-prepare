@@ -3,12 +3,16 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vite";
+import tanstackRouter from "@tanstack/router-plugin/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     // https://tailwindcss.com/docs/installation/using-vite
     tailwindcss(),
+    tanstackRouter({
+      target: "react",
+    }),
     react(),
   ],
   test: {
